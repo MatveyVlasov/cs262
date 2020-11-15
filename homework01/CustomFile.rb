@@ -4,32 +4,31 @@ class CustomFile
   end
 
   def absolute_path
-    if exist?
-      File.absolute_path(@file)
-    else
-      raise("There is no file #{@file} in the current directory")
-    end
+    exist?(error=1)
+    File.absolute_path(@file)
   end
 
   def directory?
-    if exist?
-      File.directory?(@file)
-    else
-      raise("There is no file #{@file} in the current directory")
-    end
+    exist?(error=1)
+    File.directory?(@file)
   end
 
-  def exist?
+  def exist?(error=0)
     filepath = File.absolute_path(@file)
-    File.exist?(filepath)
+    status = File.exist?(filepath)
+    if error > 0 and !status
+      raise("There is no file #{@file} in the current directory")
+    end
+    status
   end
 
   def mtime
+    exist?(error=1)
     File.mtime(@file)
   end
 end
 
-myfile = CustomFile.new('testdirectory')
+myfile = CustomFile.new('CustomFile.rb')
 puts(myfile.exist?)
 puts(myfile.directory?)
 puts(myfile.absolute_path)
